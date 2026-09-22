@@ -1,0 +1,480 @@
+{
+  "name": "الرد على الايميل تلقائي",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -432,
+        -432
+      ],
+      "id": "ae7b7409-1d1e-41d4-b554-a90231905323",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "C3XE94cq0ER9CgGC",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputText": "=subject:{{ $json.Subject }}\nemail body:{{ $json.snippet }}",
+        "categories": {
+          "categories": [
+            {
+              "category": "promotions",
+              "description": "this is any email looking to send me something"
+            },
+            {
+              "category": "social",
+              "description": "any email from social media like tiktok, instgram, facebook, etc"
+            },
+            {
+              "category": "other",
+              "description": "anything else that doesn't fall within other categories"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textClassifier",
+      "typeVersion": 1.1,
+      "position": [
+        -160,
+        -256
+      ],
+      "id": "3908d1da-525f-4e43-990e-6f08c364b4f9",
+      "name": "Text Classifier"
+    },
+    {
+      "parameters": {
+        "content": "عشان يصنف ايه الرسالة اللي جايالو بعدين يرد عليها",
+        "height": 208,
+        "width": 352,
+        "color": "#DDEC6A"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -224,
+        -304
+      ],
+      "typeVersion": 1,
+      "id": "93043a86-ceff-468b-8dd1-52b8ee2330a4",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "model": "cohere/north-mini-code:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -256,
+        -16
+      ],
+      "id": "9fe02068-1dc1-4691-aacd-2b8282c6f590",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "yY9UgzUayGu63cGC",
+          "name": "OpenRouter account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "CATEGORY_SOCIAL"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        336,
+        -320
+      ],
+      "id": "a5a8cc45-e5b7-4015-af9e-183fa935c572",
+      "name": "Add label to message",
+      "webhookId": "3ceb7f58-84a1-4d29-adb0-6233e4e54f76",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "C3XE94cq0ER9CgGC",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "CATEGORY_PROMOTIONS"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        336,
+        -528
+      ],
+      "id": "6ab952a6-b9fb-4738-b644-0d2e3377e4fa",
+      "name": "Add label to message1",
+      "webhookId": "3ceb7f58-84a1-4d29-adb0-6233e4e54f76",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "C3XE94cq0ER9CgGC",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "addLabels",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}",
+        "labelIds": [
+          "Label_4049194602366683927"
+        ]
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        320,
+        -96
+      ],
+      "id": "28330785-8dc1-4b94-a7d5-975f034b8744",
+      "name": "Add label to message2",
+      "webhookId": "3ceb7f58-84a1-4d29-adb0-6233e4e54f76",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "C3XE94cq0ER9CgGC",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "بعمل  تصنيف لانواع الرسايل اللي بتيجي على الايميل (ممكن اعملها  على حسب ما عايز العميل\n",
+        "height": 752,
+        "width": 352,
+        "color": "#A94C4C"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        208,
+        -640
+      ],
+      "typeVersion": 1,
+      "id": "46cea099-03c2-441d-9b30-035e958c2f12",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "operation": "markAsRead",
+        "messageId": "={{ $('Gmail Trigger').item.json.id }}"
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        832,
+        -288
+      ],
+      "id": "ef662043-97d7-4831-b419-406d7559744a",
+      "name": "Mark a message as read",
+      "webhookId": "9880ebd3-13d6-412a-9bf5-44f78c06e08b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "C3XE94cq0ER9CgGC",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "ممكن اختار انه اخليه يعملها mark as read تلقائي \n",
+        "height": 416,
+        "color": "#DB9F9F"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        768,
+        -448
+      ],
+      "typeVersion": 1,
+      "id": "041f9f25-0eb4-42fd-ba15-52526a05898c",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Gmail Trigger').item.json.snippet }}",
+        "options": {
+          "systemMessage": "=You are an intelligent bot at replying messages \n\nyou will reply this email\nsubject:{{ $('Gmail Trigger').item.json.Subject }}\nemail body:{{ $('Gmail Trigger').item.json.snippet }}\nthen you will reply with html format"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1248,
+        -368
+      ],
+      "id": "bc3ba6ef-5d51-42a7-b421-da37dc8c1305",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "cohere/north-mini-code:free",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        -176
+      ],
+      "id": "edf7cc6f-1d39-4ef2-a336-060e43af0488",
+      "name": "OpenRouter Chat Model1",
+      "credentials": {
+        "openRouterApi": {
+          "id": "NJAwKFUxnY4NFjjh",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "ai model يرد على المسجات اللي هتيجي على الايميل",
+        "height": 720,
+        "width": 448,
+        "color": "#2E0505"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1104,
+        -608
+      ],
+      "typeVersion": 1,
+      "id": "0b0f6444-4be6-485d-809c-00b49d249e43",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Gmail Trigger').item.json.id }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        1296,
+        -144
+      ],
+      "id": "ac5d631c-7b89-4ac9-a81c-74f9d9a883c2",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "content": "الاوتوميشن ده ممكن اخليه يرد على ايميلات العملاء مثلا كل ساعة يرد على الايميلات كلها ",
+        "height": 80,
+        "width": 2256
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -352,
+        224
+      ],
+      "typeVersion": 1,
+      "id": "5e5e656d-c2df-4aae-bb90-6a1fba9df5a6",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "operation": "reply",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1712,
+        -320
+      ],
+      "id": "f404b0f4-20db-42d5-829b-5b127618c84e",
+      "name": "Reply to a message",
+      "webhookId": "0b081971-296d-4757-8470-728f89a4cf7e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "C3XE94cq0ER9CgGC",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "من التريجر ده اقدر احدد انا عايزة الاوتو ميشن يردلي كل قد ايه على الايميلات ",
+        "height": 256,
+        "color": "#D7A8A8"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -528,
+        -512
+      ],
+      "typeVersion": 1,
+      "id": "01ccfd60-bc7c-4c06-8895-51610317cf3f",
+      "name": "Sticky Note5"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Text Classifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Classifier": {
+      "main": [
+        [
+          {
+            "node": "Add label to message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add label to message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add label to message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add label to message1": {
+      "main": [
+        [
+          {
+            "node": "Mark a message as read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add label to message": {
+      "main": [
+        [
+          {
+            "node": "Mark a message as read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add label to message2": {
+      "main": [
+        [
+          {
+            "node": "Mark a message as read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mark a message as read": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Reply to a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "e70a7f58-9fbd-4050-8f16-f0b302329730",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e0030b695b36cd2655894a630a98b0b6d8dca1713d55b2040c434d13aca992cf"
+  },
+  "nodeGroups": [],
+  "id": "OvPzuBoQS1mmTUcw",
+  "tags": []
+}
